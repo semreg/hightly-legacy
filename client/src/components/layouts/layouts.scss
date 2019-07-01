@@ -1,0 +1,21 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.bg-purple {
+  background-color: #7873f5;
+}
+
+.btn-round {
+  border-radius: 10em;
+}
+
+.align-center {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+}
+
+.align-center > * {
+  grid-column-start: 2;
+}
