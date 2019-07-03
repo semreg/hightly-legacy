@@ -3,6 +3,8 @@ import Animated from '../other/Animated'
 import Layout from '../layouts/Layout'
 import { useAlert } from 'react-alert'
 import io from 'socket.io-client'
+import Peer from 'peerjs'
+import uuid from 'uuid/v1'
 
 function StreamForm () {
   const alert = useAlert()
@@ -10,6 +12,7 @@ function StreamForm () {
   const [id, setId] = useState(undefined)
   const [stream, setStream] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
+  const [peer, setPeer] = useState(null)
 
   const videoRef = useRef(null)
 
@@ -22,20 +25,31 @@ function StreamForm () {
 
   useEffect(() => {
     const socket = io('http://localhost:3002')
+    const newPeer = new Peer('streamer', {host: '192.168.0.103', port: 9000, path: '/myapp'})
 
-    socket.on('connect', () => {
-      alert.success('Connected to server')
-      setIsConnected(true)
-
-      socket.emit('stream', { data: 'Hello' })
-      
-      setId(socket.id)
+    newPeer.on('open', id => {
+      console.log(id)
+      setPeer(newPeer)
     })
 
-    socket.on('disconnect', () => {
-      alert.error('Disconnected from server')
-      setIsConnected(false)
-    })
+    newPeer.on('error', error => console.log(error))
+
+    let connectedPeers = {}
+
+    if (newPeer && socket) {
+      socket.on('connect', () => {
+        alert.success('Connected to server')
+        setIsConnected(true)      
+        setId(newPeer.id)
+      })
+  
+      socket.emit('createstream', { data: newPeer.id })
+  
+      socket.on('disconnect', () => {
+        alert.error('Disconnected from server')
+        setIsConnected(false)
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -44,6 +58,14 @@ function StreamForm () {
     }
 
     console.log(`Stream status: ${stream ? 'running' : 'disabled'}`)
+  }, [stream])
+
+  useEffect(() => {
+    if (isConnected && stream && peer) {
+      const call = peer.call('watcher', stream)
+
+      console.log('calling...')
+    }
   }, [stream])
 
   async function startCapture (displayMediaOptions) {

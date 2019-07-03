@@ -13,34 +13,30 @@ function WatchForm () {
 
   const alert = useAlert()
 
+  const peer = new Peer('watcher', {host: '192.168.0.103', port: 9000, path: '/myapp'})
+
+  peer.on('open', id => console.log(id))
+
+  peer.on('call', call => {
+    console.log('call')
+    call.answer()
+
+    call.on('stream', stream => {
+      console.log('stream')
+
+      videoRef.current.srcObject = stream
+    })
+
+    call.on('error', err => console.log(err))
+  })
+  
+
   useEffect(() => {
     const id = uuid()
     const socket = io('http://localhost:3002')
-    const peer = new Peer('532f1860-9b38-11e9-a2ca-4b906b85ebcd')
-
-    navigator.mediaDevices.getUserMedia({video: true, audio: true}, (stream) => {
-      const call = peer.call('another-peers-id', stream);
-      call.on('stream', (remoteStream) => {
-        videoRef.current.srcObject = remoteStream
-      });
-    }, (err) => {
-      console.error('Failed to get local stream', err);
-    });
-
-    // socket.on('connect', () => {
-    //   alert.success('Connected to server')
-    //   setIsConnected(true)
-
-    //   socket.emit('newwatcher', { 
-    //     id: '532f1860-9b38-11e9-a2ca-4b906b85ebcd',
-    //     stream: '24d2f630-9b38-11e9-9bdf-8b2c6cc80f2c'
-    //   })
-    // })
-
-    // socket.on('disconnect', () => {
-    //   alert.error('Disconnected from server')
-    //   setIsConnected(false)
-    // })
+  
+    socket.on('connect', () => {
+    })
   }, [])
 
   return (
