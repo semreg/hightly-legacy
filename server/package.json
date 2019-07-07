@@ -4,14 +4,23 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/app"
+    "main-server": "node src/mainServer.js",
+    "peer-server": "node src/peerServer.js",
+    "signaling-server": "node src/signalingServer.js",
+    "dev-main-server": "nodemon src/mainServer.js",
+    "dev-peer-server": "nodemon src/peerServer.js",
+    "dev-signaling-server": "nodemon src/signalingServer.js",
+    "dev": "concurrently \"npm run dev-main-server\" \"npm run dev-peer-server\" \"npm run dev-signaling-server\"",
+    "start": "concurrently \"npm run main-server\" \"npm run peer-server\" \"npm run signaling-server\""
   },
   "dependencies": {
     "express": "^4.17.1",
     "morgan": "^1.9.1",
+    "peer": "^0.2.10",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
+    "concurrently": "^4.1.1",
     "nodemon": "^1.19.1"
   }
 }

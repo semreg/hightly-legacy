@@ -1,0 +1,8 @@
+.status-badges {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.status-badges > :nth-child(2) {
+  grid-column-start: 3;
+}

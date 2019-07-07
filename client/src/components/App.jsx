@@ -5,6 +5,7 @@ import StreamForm from './stream/StreamForm'
 import WatchForm from './watch/WatchForm'
 import { transitions, positions, Provider as AlertProvider } from 'react-alert'
 import AlertTemplate from '../javascripts/alert-template'
+import './app.scss'
 
 function App () {
   const options = {
@@ -18,7 +19,8 @@ function App () {
     <Router>
       <AlertProvider template={AlertTemplate} {...options}>
         <Switch>
-          <Route path='/watch' component={WatchForm} />
+          <Route exact path='/watch/' component={WatchForm} />
+          <Route path='/watch/:streamid' component={WatchForm} />
           <Route path='/stream' component={StreamForm} />
           <Route path='/'component={Index} />
         </Switch>

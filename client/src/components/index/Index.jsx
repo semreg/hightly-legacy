@@ -12,7 +12,7 @@ export default function Index () {
       <p className="blue-text my-4 font-weight-bold">Free and intuitive to use</p>
       <div className="row d-flex justify-content-center">
         <div className="col-xl-7 pb-2">
-          <p className="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid dolorem ea distinctio exercitationem delectus qui, quas eum architecto, amet quasi accusantium, fugit consequatur ducimus obcaecati numquam molestias hic itaque accusantium doloremque laudantium, totam rem aperiam.</p>
+          <p className="card-text">Based on WebRTC technology and websockets, app creates peer-to-peer connection between streamer and watcher browsers</p>
         </div>
       </div>
       <hr className="my-4" />
