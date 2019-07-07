@@ -37,9 +37,6 @@ function WatchForm (props) {
         watcherId: peer.id
       })
 
-      // return () => {
-      //   socket.disconnect()
-      // }
     }
   }, [socket, streamId, peer])
 

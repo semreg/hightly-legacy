@@ -21,6 +21,10 @@ function StreamForm () {
   
   const [watchers, setWatchers] = useState({})
 
+  useEffect(() => {
+    console.log(navigator.mediaDevices.getSupportedConstraints())
+  }, [])
+
   // Set stream id
   useEffect(() => {
     if (peer) {
@@ -28,7 +32,7 @@ function StreamForm () {
     }
   }, [peer])
 
-  // Info user about connection status updates
+  // Notify user about connection status updates
   useEffect(() => {
     if (isConnected) {
       alert.success('Connected to server')
@@ -55,9 +59,6 @@ function StreamForm () {
         console.log(`❌ watcher <${watcherId}> disconnected`)
       })
 
-      // return () => {
-      //   socket.disconnect()
-      // }
     }
   }, [socket, watchers, peer])
 
@@ -82,8 +83,28 @@ function StreamForm () {
     }
   }, [stream, peer, isConnected, watchers])
 
-  async function startCapture (displayMediaOptions) {
+  async function startCapture () {
+    let displayMediaOptions = {
+      video: {
+        width: { ideal: 1920, max: 1920 },
+        height: { ideal: 1080 }
+      }
+    }
+
     let captureStream = null
+
+    const supports = navigator.mediaDevices.getSupportedConstraints()
+
+    if (supports['frameRate'] || supports['aspectRatio']) {
+      displayMediaOptions = {
+        ...displayMediaOptions,
+        video: {
+          ...displayMediaOptions.video,
+          frameRate: { max: 60 },
+          aspectRatio: 1.7777777778
+        }
+      }
+    }
   
     try {
       captureStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions)
