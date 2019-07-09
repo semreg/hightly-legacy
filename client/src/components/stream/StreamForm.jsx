@@ -12,7 +12,7 @@ import './stream-form.scss'
 import useSocketConnection from '../../hooks/useSocketConnection'
 import usePeer from '../../hooks/usePeer'
 
-function StreamForm () {
+function StreamForm (props) {
   const [viewersList, setViewersList] = useState({})
 
   const [id, setId] = useState(undefined)
