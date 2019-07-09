@@ -32,3 +32,5 @@ for opening issues, coding standards, and notes on development.
 
 Editor preferences are available in the [editor config](.editorconfig) for easy use in
 common text editors. Read more and download plugins at [editorconfig.org](http://editorconfig.org).
+
+This project is licensed under the GPLv3 License - see the [LICENSE](LICENSE) file for details.
