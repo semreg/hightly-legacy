@@ -27,7 +27,7 @@ For more generic product questions and feedback, use email
 
 ## Contributing
 
-Please read through our [contributing guidelines](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md). Included are directions
+Please read through our [contributing guidelines](CONTRIBUTING.md).
 for opening issues, coding standards, and notes on development.
 
 Editor preferences are available in the [editor config](.editorconfig) for easy use in
