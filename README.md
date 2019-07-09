@@ -23,7 +23,7 @@ Have a bug or a feature request? First, read the
 closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/Semreg/hightly/issues).
 
 For more generic product questions and feedback, use email
-[support@insomnia.rest](mailto:vchabaniuk@outlook.com)
+[vchabaniuk@outlook.com](mailto:vchabaniuk@outlook.com)
 
 ## Contributing
 
