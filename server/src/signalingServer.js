@@ -1,19 +1,9 @@
 const app = require('http').createServer()
 const io = require('socket.io')(app)
 
+const { SIGNALING_SERVER_PORT: PORT } = require('./config')
+
 let streams = {}
-
-app.listen(5001)
-
-// const getKeyByValue = (object, value) => Object.keys(object).find(key => object[key] === value)
-
-if (process.env.NODE_ENV === 'development') {
-  io.use((socket, next) => {
-    console.log(`\nCurrent streams: ${JSON.stringify(streams, null, 2)}\n`)
-  
-    next()
-  })
-}
 
 io.on('connection', socket => {
   socket.on('setRole', role => {
@@ -22,20 +12,22 @@ io.on('connection', socket => {
 
   socket.on('createStream', data => { streams[data.streamId] = socket.id })
 
-  socket.on('offerNewWatcher', data => {
-    if (streams[data.streamId])  {
-      io.to(streams[data.streamId]).emit('addNewWatcher', { watcherId: data.watcherId })
+  socket.on('offerNewViewer', data => {
+    if (streams[data.streamId]) {
+      const viewerId = data.viewerId
+
+      io.to(streams[data.streamId]).emit('addNewViewer', viewerId)
     }
   })
 
-  socket.on('setWatcherProps', watcherProps => {
-    if (socket.role === 'watcher') {
-      socket.watcherProps = watcherProps
+  socket.on('setViewerProps', viewerProps => {
+    if (socket.role === 'viewer') {
+      socket.viewerProps = viewerProps
     }
   })
 
   socket.on('disconnect', () => {
-    switch(socket.role) {
+    switch (socket.role) {
       case 'streamer': {
         if (Object.values(streams).includes(socket.id)) {
           delete streams[Object.keys(streams).find(key => streams[key] === socket.id)]
@@ -44,20 +36,21 @@ io.on('connection', socket => {
         break
       }
 
-      case 'watcher': {
-        if (socket.watcherProps) {
-          // console.log(socket.watcherProps)
-          const { to, watcherId } = socket.watcherProps
+      case 'viewer': {
+        if (socket.viewerProps) {
+          const { to, viewerId } = socket.viewerProps
 
-          const streamerSocketID = streams[to]
-          
-          if (streamerSocketID) {
-            io.to(streams[to]).emit('removeWatcher', watcherId )
+          const streamerSocketId = streams[to]
+
+          if (streamerSocketId) {
+            io.to(streams[to]).emit('removeViewer', viewerId)
           }
         }
-        
+
         break
       }
     }
   })
 })
+
+app.listen(PORT, console.log(`Signaling server started on port ${PORT}...`))

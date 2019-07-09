@@ -6,3 +6,12 @@
 .status-badges > :nth-child(2) {
   grid-column-start: 3;
 }
+
+.status-badges-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.status-badges-view > * {
+  grid-column-start: 2;
+}

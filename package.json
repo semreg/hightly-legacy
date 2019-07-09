@@ -1,8 +1,22 @@
 {
-  "scripts": {
-    "dev": "concurrently \"cd client & npm run start\" \"cd server & npm run dev\""
+  "name": "client",
+  "version": "0.1.0",
+  "author": "Vlad 'Semreg' Chabaniuk",
+  "description": "WebRTC-based screen share web app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Semreg/hightly.git"
   },
-  "devDependencies": {
-    "concurrently": "^4.1.1"
+  "bugs": {
+    "url": "https://github.com/Semreg/hightly/issues"
+  },
+  "homepage": "https://github.com/Semreg/hightly",
+  "scripts": {
+    "install-client": "cd client; yarn install",
+    "install-server": "cd server; yarn install",
+    "install-all": "yarn install-client && yarn install-server",
+    "start-server": "cd server; yarn servers-start",
+    "client-build": "cd client; yarn build",
+    "start": "yarn client-build && yarn start-server"
   }
 }
