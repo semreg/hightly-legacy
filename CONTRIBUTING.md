@@ -5,14 +5,14 @@ process easy and effective for everyone involved.
 
 ## Using the issue tracker
 
-[GitHub Issues](https://github.com/getinsomnia/insomnia/issues) is the preferred channel 
+[GitHub Issues](https://github.com/Semreg/hightly/issues) is the preferred channel 
 for [bug reports](#bug-reports), [features requests](#feature-requests) 
 and [submitting pull requests](#pull-requests).
 
 Please respect the following restrictions:
 
 - Please **do not** use the issue tracker for personal support requests (email
-  [support@insomnia.rest](mailto:support@insomnia.rest)).
+  [vchabaniuk@outlook.com](mailto:vchabaniuk@outlook.com)).
 
 - Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
