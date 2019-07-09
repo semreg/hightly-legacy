@@ -7,6 +7,7 @@ import { useAlert } from 'react-alert'
 import uuid from 'uuid/v1'
 import config from '../../config'
 import { object } from 'prop-types'
+import './watch-form.scss'
 
 // Custom hooks
 import usePeer from '../../hooks/usePeer'

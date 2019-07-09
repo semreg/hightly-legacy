@@ -6,6 +6,7 @@ import Layout from '../layouts/Layout'
 import { useAlert } from 'react-alert'
 import uuid from 'uuid/v1'
 import config from '../../config'
+import './stream-form.scss'
 
 // Custom hooks
 import useSocketConnection from '../../hooks/useSocketConnection'

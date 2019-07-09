@@ -2,6 +2,7 @@ import React from 'react'
 import Layout from '../layouts/Layout'
 import Animated from '../other/Animated'
 import { Link } from 'react-router-dom'
+import './index.scss'
 
 const Index = () => (
   <Layout>
