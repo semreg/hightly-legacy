@@ -17,6 +17,6 @@
     "install-all": "yarn install-client && yarn install-server",
     "start-server": "cd server; yarn servers-start",
     "client-build": "cd client; yarn build",
-    "start": "yarn client-build && yarn start-server"
+    "start": "npm run client-build && npm run start-server"
   }
 }

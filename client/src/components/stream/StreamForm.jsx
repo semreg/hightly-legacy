@@ -98,6 +98,7 @@ function StreamForm (props) {
 
   async function startCapture () {
     let displayMediaOptions = {
+      cursor: 'always',
       video: {
         width: {
           ideal: 1920,
