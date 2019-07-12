@@ -3,7 +3,7 @@ const io = require('socket.io')(app, {
   handlePreflightRequest: (req, res) => {
     const headers = {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Origin': req.headers.origin, //or the specific origin you want$
+      'Access-Control-Allow-Origin': req.headers.origin,
       'Access-Control-Allow-Credentials': true
     }
 
