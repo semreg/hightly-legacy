@@ -1,5 +1,17 @@
 const app = require('http').createServer()
-const io = require('socket.io')(app)
+const io = require('socket.io')(app, {
+  handlePreflightRequest: (req, res) => {
+    const headers = {
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Origin': req.headers.origin, //or the specific origin you want$
+      'Access-Control-Allow-Credentials': true
+    }
+
+    res.writeHead(200, headers)
+    res.end()
+  }
+})
+
 
 const { SIGNALING_SERVER_PORT: PORT } = require('./config')
 
