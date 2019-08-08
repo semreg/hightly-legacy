@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 
-function useSocketConnection (url, role) {
-  const [isConnected, setIsConnected] = useState(false)
+function useSocketConnection (url, role, props) {
+  const [isConnected, setIsConnected] = useState(null)
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
@@ -10,6 +10,10 @@ function useSocketConnection (url, role) {
 
     newSocket.on('connect', () => {
       newSocket.emit('setRole', role)
+
+      if (props) {
+        newSocket.emit('setProps', props)
+      }
 
       setSocket(newSocket)
       setIsConnected(true)

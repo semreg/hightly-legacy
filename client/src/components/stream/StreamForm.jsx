@@ -12,17 +12,19 @@ import './stream-form.scss'
 import useSocketConnection from '../../hooks/useSocketConnection'
 import usePeer from '../../hooks/usePeer'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 function StreamForm (props) {
   const [viewersList, setViewersList] = useState({})
 
-  const [id, setId] = useState(undefined)
+  const [id, setId] = useState(uuid())
   const [stream, setStream] = useState(null)
 
   const videoRef = useRef(null)
 
-  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'streamer')
+  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'streamer', { peerId: id })
 
-  const peer = usePeer(uuid(), {
+  const peer = usePeer(id, {
     host: config.PEER_SERVER_HOST,
     port: config.PEER_SERVER_PORT,
     path: '/peer'
@@ -39,16 +41,22 @@ function StreamForm (props) {
 
   // Notify user about connection status updates
   useEffect(() => {
-    if (isConnected) {
+    if (isConnected === false) {
+      alert.error('Disconnected from server')
+    } else if (isConnected === true) {
       alert.success('Connected to server')
     } else {
-      alert.info('Attempting to connect to server')
+      alert.info('Attempting to connect to server...')
     }
   }, [isConnected])
 
   useEffect(() => {
     if (socket && viewersList && peer) {
       socket.emit('createStream', { streamId: peer.id })
+
+      socket.emit('setProps', {
+        peerId: peer.id
+      })
 
       socket.on('addNewViewer', viewerId => {
         console.log(`✅ new viewer <${viewerId}> connected`)
@@ -141,6 +149,12 @@ function StreamForm (props) {
     }
   }
 
+  const onInputClick = e => {
+    e.target.select()
+    document.execCommand('copy')
+    alert.success('Coppied co clipboard')
+  }
+
   return (
     <Layout>
       <Animated>
@@ -186,7 +200,7 @@ function StreamForm (props) {
           <div className='align-center'>
             <div className='md-form' style={{ 'textAlign': 'left', 'color': '#777' }}>
               <i className='fas fa-link prefix'></i>
-              <input autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`${id ? `${config.URL}/watch/${id}` : ''}`}/>
+              <input onClick={onInputClick} autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`${id ? `${isProd ? config.URL : 'http://localhost:3000'}/watch/${id}` : ''}`}/>
               <label htmlFor='inputIconEx2'>Link to your stream</label>
             </div>
           </div>

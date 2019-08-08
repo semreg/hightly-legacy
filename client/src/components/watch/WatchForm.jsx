@@ -18,13 +18,15 @@ const propTypes = { match: object }
 function WatchForm ({ match }) {
   const [streamId, setStreamId] = useState(null)
   const [stream, setStream] = useState(null)
+  const [id] = useState(uuid())
+  const [isConnectedToStream, setIsConnectedToStream] = useState(null)
 
   const videoRef = useRef(null)
   const inputRef = useRef(null)
 
-  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'viewer')
+  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'viewer', { peerId: id })
 
-  const peer = usePeer(uuid(), {
+  const peer = usePeer(id, {
     host: config.PEER_SERVER_HOST,
     port: config.PEER_SERVER_PORT,
     path: '/peer'
@@ -33,24 +35,52 @@ function WatchForm ({ match }) {
   const alert = useAlert()
 
   useEffect(() => {
-    console.log(match)
-
-    if (match.params.streamid) {
-      setStreamId(match.params.streamid)
+    if (isConnectedToStream === true) {
+      alert.success('Connected to stream')
+    } else if (isConnectedToStream === false) {
+      alert.info('Disconnected from stream')
     }
-  }, [])
+  }, [isConnectedToStream])
 
   useEffect(() => {
-    if (socket && streamId && peer) {
-      socket.emit('offerNewViewer', {
-        streamId: streamId,
-        viewerId: peer.id
+    if (match.params.streamid && socket) {
+      socket.emit('checkStreamExistence', match.params.streamid)
+    }
+  }, [socket, match.params.streamid])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('streamExistenceInfo', data => {
+        const { active, id } = data
+
+        if (!active) {
+          alert.error('This stream does not exist')
+        } else {
+          setStreamId(id)
+
+          const newUrl = `/watch/${id}`
+
+          window.history.replaceState('watch', 'New stream', newUrl)
+
+          setIsConnectedToStream(true)
+        }
       })
 
-      socket.emit('setViewerProps', {
-        to: streamId,
-        viewerId: peer.id
+      socket.on('disconnectFromStream', () => {
+        setStreamId(null)
+        setIsConnectedToStream(false)
       })
+
+      if (streamId && peer) {
+        socket.emit('offerNewViewer', {
+          streamId: streamId,
+          viewerId: peer.id
+        })
+
+        socket.emit('setProps', {
+          to: streamId
+        })
+      }
     }
   }, [socket, streamId, peer])
 
@@ -66,15 +96,6 @@ function WatchForm ({ match }) {
     }
   }, [peer])
 
-  // Notify user about connection status updates
-  useEffect(() => {
-    if (isConnected) {
-      alert.success('Connected to server')
-    } else {
-      alert.info('Attempting to connect to server')
-    }
-  }, [isConnected])
-
   // Display steram on a page
   useEffect(() => {
     if (stream) {
@@ -87,7 +108,7 @@ function WatchForm ({ match }) {
 
     // TODO: Add some regex
     if (id.length === 36) {
-      setStreamId(id)
+      socket.emit('checkStreamExistence', id)
     } else {
       alert.error('Your link or id is invalid')
     }
@@ -95,12 +116,12 @@ function WatchForm ({ match }) {
 
   return (
     <Layout>
-      <Animated>
-        <Helmet>
-          <title>Hightly &#183; Watch</title>
-        </Helmet>
-        {streamId
-          ? (
+      <Helmet>
+        <title>Hightly &#183; Watch</title>
+      </Helmet>
+      {streamId
+        ? (
+          <Animated>
             <div className='jumbotron text-center pt-1'>
               <hr/>
               <div className='status-badges-viewer'>
@@ -121,8 +142,10 @@ function WatchForm ({ match }) {
               </div>
               <hr/>
             </div>
-          )
-          : (
+          </Animated>
+        )
+        : (
+          <Animated>
             <div className='jumbotron text-center pt-1'>
               <h2 className='card-title h2 mt-4'>Enter Your Link</h2>
               <div className='row d-flex justify-content-center'>
@@ -139,9 +162,9 @@ function WatchForm ({ match }) {
                 <button onClick={onBtnClick} type='button' className='btn btn-outline-success waves-effect btn-round'>Next <span className='fas fa-play ml-1'></span></button>
               </div>
             </div>
-          )
-        }
-      </Animated>
+          </Animated>
+        )
+      }
     </Layout>
   )
 }

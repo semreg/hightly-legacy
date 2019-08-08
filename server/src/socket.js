@@ -1,28 +1,21 @@
-const app = require('http').createServer()
-const io = require('socket.io')(app, {
-  handlePreflightRequest: (req, res) => {
-    const headers = {
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Origin': req.headers.origin,
-      'Access-Control-Allow-Credentials': true
-    }
-
-    res.writeHead(200, headers)
-    res.end()
-  }
-})
-
-
-const { SIGNALING_SERVER_PORT: PORT } = require('./config')
+const io = require('./index')
 
 let streams = {}
 
-io.on('connection', socket => {
+function socketHandler (socket) {
   socket.on('setRole', role => {
     socket.role = role
   })
 
   socket.on('createStream', data => { streams[data.streamId] = socket.id })
+
+  socket.on('checkStreamExistence', id => {
+    if (streams[id]) {
+      socket.emit('streamExistenceInfo', { active: true, id })
+    } else {
+      socket.emit('streamExistenceInfo', { active: false, id })
+    }
+  })
 
   socket.on('offerNewViewer', data => {
     if (streams[data.streamId]) {
@@ -63,6 +56,6 @@ io.on('connection', socket => {
       }
     }
   })
-})
+}
 
-app.listen(PORT, console.log(`Signaling server started on port ${PORT}...`))
+module.exports = socketHandler

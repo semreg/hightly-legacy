@@ -1,13 +1,6 @@
-import React from 'react'
-import { string } from 'prop-types'
-
-const propTypes = { role: string }
-
-const EmptyEmbed = ({ role }) => (
-  <svg
-    className='embed-responsive-item'
-    width='100%'
-    height='225'
+<svg
+    width='888.8888888888888'
+    height='500'
     xmlns='http://www.w3.org/2000/svg'
     preserveAspectRatio='xMidYMid slice'
     focusable='false'
@@ -41,8 +34,3 @@ const EmptyEmbed = ({ role }) => (
       </path>
     </svg>
   </svg>
-)
-
-EmptyEmbed.propTypes = propTypes
-
-export default EmptyEmbed
