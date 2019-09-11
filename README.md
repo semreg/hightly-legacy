@@ -6,7 +6,7 @@ Web-based screen share web app
 # Usage
 
 ## Online
-https://hightly.semreg.me
+http://bit.ly/hightly
 
 ## Installing
 Before installing, make sure you have node and yarn installed.
