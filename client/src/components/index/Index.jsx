@@ -17,8 +17,8 @@ const Index = () => (
         </div>
         <hr className='my-4' />
         <div className='pt-2'>
-          <Link to='stream' type='button' className='btn btn-blue waves-effect aqua-gradient btn-round'>Start Stream <span className='fas fa-broadcast-tower ml-1'></span></Link>
-          <Link to='watch' type='button' className='btn waves-effect purple-gradient btn-round'>Watch Another Stream <i className='fas fa-eye ml-1'></i></Link>
+          <Link to='stream' className='btn btn-round aqua-gradient'>Start Stream <span className='fas fa-broadcast-tower ml-1'></span></Link>
+          <Link to='watch' className='btn waves-effect purple-gradient btn-round'>Watch Another Stream <i className='fas fa-eye ml-1'></i></Link>
         </div>
       </div>
     </Animated>

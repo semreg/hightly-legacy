@@ -64,12 +64,17 @@ function StreamForm (props) {
         const newViewersList = viewersList
 
         if (stream) {
-          peer.call(viewerId, stream)
+          const call = peer.call(viewerId, stream)
 
-          newViewersList[viewerId] = true
-          setViewersList(newViewersList)
+          if (call) {
+            newViewersList[viewerId] = { active: true }
+            setViewersList(newViewersList)
+          } else {
+            newViewersList[viewerId] = { active: false }
+            setViewersList(newViewersList)
+          }
         } else {
-          newViewersList[viewerId] = false
+          newViewersList[viewerId] = { active: false }
           setViewersList(newViewersList)
         }
       })
@@ -93,12 +98,17 @@ function StreamForm (props) {
     }
   }, [stream])
 
-  // TODO: refactor recalling action
   useEffect(() => {
     if (stream && peer && viewersList) {
       for (const id in viewersList) {
-        if (!viewersList[id]) {
+        if (!viewersList[id].active) {
           peer.call(id, stream)
+
+          const newViewersList = viewersList
+
+          newViewersList[id] = { active: true }
+
+          setViewersList(newViewersList)
         }
       }
     }
@@ -139,13 +149,21 @@ function StreamForm (props) {
   }
 
   function stopCapture () {
-    if (videoRef.current.srcObject) {
+    if (videoRef.current.srcObject && viewersList) {
       videoRef.current.srcObject
         .getTracks()
         .forEach(track => track.stop())
 
       setStream(null)
       videoRef.current.srcObject = null
+
+      for (const id in viewersList) {
+        const newViewersList = viewersList
+
+        newViewersList[id] = { active: false }
+
+        setViewersList(newViewersList)
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:8
 
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 
@@ -14,6 +14,6 @@ RUN yarn install-all
 
 COPY . /usr/src/app
 
-EXPOSE 5000 5001 5002
+EXPOSE 5000
 
 CMD ["yarn", "start"]

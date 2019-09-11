@@ -21,5 +21,11 @@
 	"plugins": [
 		"react"
 	],
-	"parser": "babel-eslint"
+	"parser": "babel-eslint",
+	"rules": {
+		"jsx-quotes": [
+			1,
+			"prefer-single"
+		]
+	}
 }
