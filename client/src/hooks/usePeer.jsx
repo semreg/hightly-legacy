@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Peer from 'peerjs'
 
-function usePeer (id, opts) {
+const usePeer = (id, opts) => {
   const [peer, setPeer] = useState(null)
 
   useEffect(() => {

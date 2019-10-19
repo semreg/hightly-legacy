@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import io from 'socket.io-client'
 
-function useSocketConnection (url, role, props) {
+const useSignalingSocket = (url, role, props) => {
   const [isConnected, setIsConnected] = useState(null)
   const [socket, setSocket] = useState(null)
 
@@ -30,4 +30,4 @@ function useSocketConnection (url, role, props) {
   return [socket, isConnected]
 }
 
-export default useSocketConnection
+export default useSignalingSocket

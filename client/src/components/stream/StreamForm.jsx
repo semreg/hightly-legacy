@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useRef } from 'react'
 import { Helmet } from 'react-helmet'
 import Animated from '../other/Animated'
@@ -9,12 +10,13 @@ import config from '../../config'
 import './stream-form.scss'
 
 // Custom hooks
-import useSocketConnection from '../../hooks/useSocketConnection'
+import useSignalingSocket from '../../hooks/useSignalingSocket'
 import usePeer from '../../hooks/usePeer'
+import useRDESocket from '../../hooks/useRDESocket'
 
 const isProd = process.env.NODE_ENV === 'production'
 
-function StreamForm (props) {
+const StreamForm = props => {
   const [viewersList, setViewersList] = useState({})
 
   const [id, setId] = useState(uuid())
@@ -22,15 +24,28 @@ function StreamForm (props) {
 
   const videoRef = useRef(null)
 
-  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'streamer', { peerId: id })
+  const [socket, isConnected] = useSignalingSocket('hightly.semreg.me', 'streamer', { peerId: id })
+  const [RDEsocket, isRDEActive] = useRDESocket(props.match.params.rdeKey ? props.match.params.rdeKey : '')
+  const [doAllowRD, setDoAllowRD] = useState(false)
 
-  const peer = usePeer(id, {
-    host: config.PEER_SERVER_HOST,
-    port: config.PEER_SERVER_PORT,
-    path: '/peer'
-  })
+  const peer = usePeer(id
+    // , {
+    //   host: config.PEER_SERVER_HOST,
+    //   port: config.PEER_SERVER_PORT,
+    //   path: '/peer'
+    // }
+  )
 
   const alert = useAlert()
+
+  useEffect(() => {
+    if (isRDEActive) {
+      alert.success('Remote Desktop Extension is active')
+
+      // const newUrl = `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://hightly.semreg.me'}/stream`
+      // window.history.replaceState('watch', 'New stream', newUrl)
+    }
+  }, [isRDEActive])
 
   // Set stream id
   useEffect(() => {
@@ -90,6 +105,16 @@ function StreamForm (props) {
       })
     }
   }, [socket, viewersList, peer, stream])
+
+  useEffect(() => {
+    if (peer && RDEsocket && isRDEActive) {
+      peer.on('connection', conn => {
+        conn.on('data', data => {
+          console.log(data)
+        })
+      })
+    }
+  }, [peer, RDEsocket])
 
   // Display captured video
   useEffect(() => {
@@ -205,6 +230,14 @@ function StreamForm (props) {
             }
           </div>
           <hr className='my-4' />
+          {isRDEActive
+            ? (
+              <div className='custom-control custom-checkbox'>
+                <input onChange={() => setDoAllowRD(!doAllowRD)} type='checkbox' className='custom-control-input' id='defaultChecked2'/>
+                <label className='custom-control-label' htmlFor='defaultChecked2'>Use Remote Desktop</label>
+              </div>
+            ) : ''
+          }
           <div className='pt-2'>
             <button onClick={startCapture} type='button' className={`btn btn-outline-success waves-effect btn-round ${stream === null ? '' : 'disabled'}`}>Start <span className='fas fa-play ml-1'></span></button>
             <button onClick={stopCapture} type='button' className={`btn btn-outline-danger waves-effect btn-round ${stream !== null ? '' : 'disabled'}`}>Stop <i className='fas fa-stop'></i></button>

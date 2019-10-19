@@ -20,9 +20,10 @@ function App () {
       <AlertProvider template={AlertTemplate} {...options}>
         <Switch>
           <Route exact path='/watch/' component={WatchForm} />
-          <Route path='/watch/:streamid' component={WatchForm} />
-          <Route path='/stream' component={StreamForm} />
-          <Route path='/'component={Index} />
+          <Route exact path='/watch/:streamid' component={WatchForm} />
+          <Route exact path='/stream' component={StreamForm} />
+          <Route exact path='/stream/:rdeKey' component={StreamForm} />
+          <Route exact path='/'component={Index} />
         </Switch>
       </AlertProvider>
     </Router>

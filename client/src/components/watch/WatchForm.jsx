@@ -5,34 +5,52 @@ import Animated from '../other/Animated'
 import EmptyEmbed from '../layouts/EmptyEmbed'
 import { useAlert } from 'react-alert'
 import uuid from 'uuid/v1'
-import config from '../../config'
 import { object } from 'prop-types'
 import './watch-form.scss'
+import { getCoords, getNaturalCoords } from '../../utils/coords'
 
 // Custom hooks
 import usePeer from '../../hooks/usePeer'
-import useSocketConnection from '../../hooks/useSocketConnection'
+import useSignalingSocket from '../../hooks/useSignalingSocket'
 
 const propTypes = { match: object }
 
-function WatchForm ({ match }) {
+const WatchForm = ({ match }) => {
   const [streamId, setStreamId] = useState(null)
   const [stream, setStream] = useState(null)
   const [id] = useState(uuid())
   const [isConnectedToStream, setIsConnectedToStream] = useState(null)
+  const [RDEConn, setRDEConn] = useState(null)
+
+  // RDE
+  const [doShowRDControls, setDoShowRDControls] = useState(false)
+  const [doShowCloseControls, setDoShowCloseControls] = useState(false)
 
   const videoRef = useRef(null)
+  const videoWithControlsRef = useRef(null)
   const inputRef = useRef(null)
 
-  const [socket, isConnected] = useSocketConnection(config.SIGNALING_SERVER_URL, 'viewer', { peerId: id })
+  const [socket, isConnected] = useSignalingSocket('hightly.semreg.me', 'viewer', { peerId: id })
 
-  const peer = usePeer(id, {
-    host: config.PEER_SERVER_HOST,
-    port: config.PEER_SERVER_PORT,
-    path: '/peer'
-  })
+  const peer = usePeer(id
+  //   , {
+  //   host: config.PEER_SERVER_HOST,
+  //   port: config.PEER_SERVER_PORT,
+  //   path: '/peer'
+  // }
+  )
 
   const alert = useAlert()
+
+  // useEffect(() => {
+  //   document.addEventListener('keydown', handleUserInput)
+  // }, [])
+
+  useEffect(() => {
+    if (doShowCloseControls) {
+      document.addEventListener('keydown', handleUserInput)
+    }
+  }, [doShowRDControls])
 
   useEffect(() => {
     if (isConnectedToStream === true) {
@@ -89,12 +107,29 @@ function WatchForm ({ match }) {
       peer.on('call', call => {
         call.answer()
 
-        call.on('stream', stream => setStream(stream))
+        call.on('stream', stream => {
+          setStream(stream)
+
+          const conn = peer.connect(match.params.streamid)
+
+          conn.on('open', () => {
+            conn.on('data', data => { console.log(data) })
+            setRDEConn(conn)
+          })
+        })
 
         call.on('error', error => console.log(error))
       })
     }
   }, [peer])
+
+  useEffect(() => {
+    if (RDEConn) {
+      // console.log(RDEConn)
+      RDEConn.send('лох блядkm')
+      console.log('otpravil suka')
+    }
+  }, [RDEConn])
 
   // Display steram on a page
   useEffect(() => {
@@ -102,6 +137,12 @@ function WatchForm ({ match }) {
       videoRef.current.srcObject = stream
     }
   }, [stream])
+
+  useEffect(() => {
+    if (stream && doShowRDControls) {
+      videoWithControlsRef.current.srcObject = stream
+    }
+  }, [doShowRDControls, videoWithControlsRef, stream])
 
   const onBtnClick = () => {
     const id = inputRef.current.value.slice(inputRef.current.value.length - 36)
@@ -114,11 +155,88 @@ function WatchForm ({ match }) {
     }
   }
 
+  const showCloseControls = e => {
+    if (e.key || e.type === 'dblclick') {
+      if (e.key === 'Escape' || e.type === 'dblclick') {
+        setDoShowCloseControls(true)
+        window.setTimeout(() => {
+          setDoShowCloseControls(false)
+        }, 3000)
+      }
+    }
+  }
+
+  const toggleRDControls = () => {
+    setDoShowRDControls(true)
+  }
+
+  const handleUserInput = e => {
+    if (RDEConn) {
+      const defaultMsg = {
+        action_type: 'None',
+        payload: {
+          coords: [0, 0],
+          delta_y: 0,
+          key: 'k'
+        }
+      }
+
+      switch (e.type) {
+        case 'mousemove':
+          const coords = getNaturalCoords()
+
+          let msg = { action_type: 'MouseMove',
+            payload: {
+              ...defaultMsg.payload,
+              coords
+            }
+          }
+
+          RDEConn.send(JSON.stringify(msg))
+          break
+      }
+    }
+
+    showCloseControls(e)
+  }
+
   return (
     <Layout>
       <Helmet>
         <title>Hightly &#183; Watch</title>
       </Helmet>
+      {doShowRDControls
+        ? (
+          <div
+            id='videoWrapper'
+            className='video-wrapper'
+            // onKeyDown={handleUserInput}
+          >
+            <video
+              id='video'
+              ref={videoWithControlsRef}
+              className={`${!doShowCloseControls ? 'cursor-none' : ''}`}
+              autoPlay='autoplay'
+              onDoubleClick={showCloseControls}
+              onClick={handleUserInput}
+              onKeyDown={handleUserInput}
+              onKeyUp={handleUserInput}
+              onMouseMove={handleUserInput}
+            >
+            </video>
+            <div id='video1'></div>
+            {doShowCloseControls
+              ? (
+                <a onClick={() => setDoShowRDControls(false)} href='#' id='close' className='float'>
+                  <i className='fa fa-times my-float'></i>
+                </a>
+              )
+              : ''
+            }
+          </div>
+        )
+        : ''
+      }
       {streamId
         ? (
           <Animated>
@@ -141,6 +259,9 @@ function WatchForm ({ match }) {
                 }
               </div>
               <hr/>
+              <button onClick={toggleRDControls} type='button' className='btn btn-outline-primary waves-effect'>
+                <i className='fas fa-compress'></i>
+              </button>
             </div>
           </Animated>
         )
