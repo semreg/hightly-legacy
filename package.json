@@ -12,14 +12,15 @@
   },
   "homepage": "https://github.com/Semreg/hightly",
   "scripts": {
-    "install:client": "cd client; yarn install",
-    "install:server": "cd server; yarn install",
-    "install:all": "yarn install:client && yarn install:server",
-    "start:server": "cd server; yarn start",
-    "client:build": "cd client; yarn build",
-    "start": "yarn client:build && yarn start:server"
+    "build:client": "cd client && npm i && npm run build",
+    "build:server": "cd server && npm i",
+    "build": "concurrently \"npm run build:client\" \"npm run build:server\"",
+    "start": "cd server && npm run start"
   },
   "dependencies": {
     "js-base64": "^2.5.1"
+  },
+  "devDependencies": {
+    "concurrently": "^5.1.0"
   }
 }
