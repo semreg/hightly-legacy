@@ -3,6 +3,7 @@ const http = require('http')
 const path = require('path')
 const ExpressPeerServer = require('peer').ExpressPeerServer
 const socketIo = require('socket.io')
+const { port } = require('./config')
 
 const app = express()
 const server = http.createServer(app)
@@ -112,4 +113,4 @@ app.use(express.static(path.join(__dirname, '/../../client/build')))
 app.use('*', (req, res) => res.sendFile(path.join(__dirname, '/../../client/build/index.html')))
 app.use('/peer', peerServer)
 
-server.listen(5000, () => console.log('Started'))
+server.listen(port, () => console.log(`App is ready on port ${port}`))
