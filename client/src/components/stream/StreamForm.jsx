@@ -251,7 +251,7 @@ const StreamForm = props => {
           <div className='align-center'>
             <div className='md-form' style={{ 'textAlign': 'left', 'color': '#777' }}>
               <i className='fas fa-link prefix'></i>
-              <input onClick={onInputClick} autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`https://hightly-dev.herokuapp.com/watch${id}`}/>
+              <input onClick={onInputClick} autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`https://hightly-dev.herokuapp.com/watch/${id}`}/>
               <label htmlFor='inputIconEx2'>Link to your stream</label>
             </div>
           </div>
