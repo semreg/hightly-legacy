@@ -30,7 +30,7 @@ const WatchForm = ({ match }) => {
   const videoWithControlsRef = useRef(null)
   const inputRef = useRef(null)
 
-  const [socket, isConnected] = useSignalingSocket('hightly.semreg.me', 'viewer', { peerId: id })
+  const [socket, isConnected] = useSignalingSocket('hightly-dev.herokuapp.com', 'viewer', { peerId: id })
 
   const peer = usePeer(id
   //   , {

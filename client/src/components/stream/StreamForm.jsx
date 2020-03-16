@@ -24,7 +24,7 @@ const StreamForm = props => {
 
   const videoRef = useRef(null)
 
-  const [socket, isConnected] = useSignalingSocket('hightly.semreg.me', 'streamer', { peerId: id })
+  const [socket, isConnected] = useSignalingSocket('hightly-dev.herokuapp.com', 'streamer', { peerId: id })
   const [RDEsocket, isRDEActive] = useRDESocket(props.match.params.rdeKey ? props.match.params.rdeKey : '')
   const [doAllowRD, setDoAllowRD] = useState(false)
 
@@ -251,7 +251,7 @@ const StreamForm = props => {
           <div className='align-center'>
             <div className='md-form' style={{ 'textAlign': 'left', 'color': '#777' }}>
               <i className='fas fa-link prefix'></i>
-              <input onClick={onInputClick} autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`${id ? `${isProd ? config.URL : 'http://localhost:3000'}/watch/${id}` : ''}`}/>
+              <input onClick={onInputClick} autoFocus readOnly type='text' id='inputIconEx2' className='form-control' value={`https://hightly-dev.herokuapp.com/watch${id}`}/>
               <label htmlFor='inputIconEx2'>Link to your stream</label>
             </div>
           </div>
