@@ -1,4 +1,4 @@
-**The app is no longer maintained, some new and cooler WebRTC projects are on about to be launhced!**
+**The app is no longer maintained, some new and cooler WebRTC projects are about to be launhced!**
 
 # Hightly
 [![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
